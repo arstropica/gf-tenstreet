@@ -820,9 +820,6 @@ if (class_exists( "GFForms" ) && class_exists( "GFAddOn") && class_exists( "GFAP
                 }
             }
             
-            file_put_contents($this->plugin_path . '/data/log.txt', "");
-            error_log(print_r([$lead, $_response['body']], true), 3, $this->plugin_path . '/data/log.txt');
-            
             if (isset($response) && isset($response['Status']) && $response['Status'] == 'Accepted') {
                 $post = $this->get_post_data( $response, $entry, $form );
                 $meta = $this->get_post_meta( $response );

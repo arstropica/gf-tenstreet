@@ -1,0 +1,70 @@
+{
+    "fields": [
+        {
+            "name": "GivenName",
+            "label": "First Name",
+            "node" : "PersonName",
+            "type": "text"
+        },
+        {
+            "name": "MiddleName",
+            "label": "Middle Name",
+            "node" : "PersonName",
+            "type": "text"
+        },
+        {
+            "name": "FamilyName",
+            "label": "Last Name",
+            "node" : "PersonName",
+            "type": "text"
+        },
+        {
+            "name": "Address1",
+            "label": "Address 1",
+            "node" : "PostalAddress",
+            "type": "text"
+        },
+        {
+            "name": "Address2",
+            "label": "Address 2",
+            "node" : "PostalAddress",
+            "type": "text"
+        },
+        {
+            "name": "Municipality",
+            "label": "City",
+            "node" : "PostalAddress",
+            "type": "text"
+        },
+        {
+            "name": "Region",
+            "label": "State",
+            "node" : "PostalAddress",
+            "type": "text"
+        },
+        {
+            "name": "PostalCode",
+            "label": "Zip",
+            "node" : "PostalAddress",
+            "type": "text"
+        },
+        {
+            "name": "CountryCode",
+            "label": "Country",
+            "node" : "PostalAddress",
+            "type": "text"
+        },
+        {
+            "name": "InternetEmailAddress",
+            "label": "Email",
+            "node" : "ContactData",
+            "type": "text"
+        },
+        {
+            "name": "PrimaryPhone",
+            "label": "Phone",
+            "node" : "ContactData",
+            "type": "text"
+        }
+    ]
+}

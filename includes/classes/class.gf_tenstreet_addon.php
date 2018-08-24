@@ -156,6 +156,18 @@ if (class_exists( "GFForms" ) && class_exists( "GFAddOn") && class_exists( "GFAP
                     "title" => "Gravity Forms TenStreet Form Settings",
                     "fields" => array (
                         array (
+                            "label" => "Enable TenStreet on this Form",
+                            "type" => "checkbox",
+                            "name" => "activate",
+                            "tooltip" => "Select if this form will submit leads to TenStreet.",
+                            "choices" => array (
+                                array (
+                                    "label" => "Activate",
+                                    "name" => "activate"
+                                )
+                            )
+                        ),
+                        array (
                             "label" => "Enable Custom Field Mapping",
                             "type" => "checkbox",
                             "name" => "enabled",
@@ -489,7 +501,7 @@ if (class_exists( "GFForms" ) && class_exists( "GFAddOn") && class_exists( "GFAP
                 $settings = $this->default_form_mapping_fields( $form );
             }
             
-            $excluded_fields = array_merge(['enabled'], $this->api_credential_fields);
+            $excluded_fields = array_merge(['enabled', 'activate'], $this->api_credential_fields);
             
             foreach ($excluded_fields as $field) {
                 unset( $settings [$field] );
@@ -766,13 +778,22 @@ if (class_exists( "GFForms" ) && class_exists( "GFAddOn") && class_exists( "GFAP
          * @return int Post ID
          */
         public function maybe_api_submit($entry, $form) {
-            $gf_tenstreet = $this->get_gf_tenstreet();
-            $clean = $this->clean_entry( $entry );
-
-            $lead = $this->build_tenstreet_submission_data($clean, $form);
             
-            if ($gf_tenstreet->is_plugin_activated( true )) {
-                $post_id = $this->api_submit( $lead, $entry, $form );
+            $post_id = false;
+            
+            $settings = $this->get_form_settings( $form );
+            
+            if (isset($settings['activate']) && !empty($settings['activate'])) {
+            
+                $gf_tenstreet = $this->get_gf_tenstreet();
+                $clean = $this->clean_entry( $entry );
+    
+                $lead = $this->build_tenstreet_submission_data($clean, $form);
+                
+                if ($gf_tenstreet->is_plugin_activated( true )) {
+                    $post_id = $this->api_submit( $lead, $entry, $form );
+                }
+                
             }
             
             return $post_id;

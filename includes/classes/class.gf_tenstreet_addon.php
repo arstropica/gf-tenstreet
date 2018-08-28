@@ -334,7 +334,6 @@ if (class_exists( "GFForms" ) && class_exists( "GFAddOn") && class_exists( "GFAP
                 }
                 
             }
-            // print_r($settings); exit;
             return $settings;
             
         }

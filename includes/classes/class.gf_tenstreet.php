@@ -176,7 +176,6 @@ class GF_TenStreet {
         
         // Setup Custom Post Type
         $first_run = $this->get_first_run();
-        error_log(var_export($first_run, true), 3, self::$plugin_path . '/data/log.txt');
         $this->post_type = new Post_Type_GF_TenStreet( $first_run );
         
         // Load Assets

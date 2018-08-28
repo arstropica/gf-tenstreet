@@ -26,3 +26,7 @@ Yes. You will need to enter access credentials from TenStreet to submit to their
 
 = 1.0 =
 * Initial commit.
+
+= 1.01 =
+* Fix post type capabilities.
+* Fix post type visibility.

@@ -35,3 +35,6 @@ Yes.
 ### 1.0 ###
 * First commit.
 
+### 1.01 ###
+* Fix post type capabilities.
+* Fix post type visibility.

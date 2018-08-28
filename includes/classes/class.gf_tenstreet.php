@@ -82,12 +82,6 @@ class GF_TenStreet {
      */
     protected static $debug;
     
-    /**
-     * Plugin First Run
-     *
-     * @var boolean
-     */
-    protected static $first_run;
     const slug = 'gf-tenstreet';
     const name = 'GF_TenStreet';
     
@@ -182,6 +176,7 @@ class GF_TenStreet {
         
         // Setup Custom Post Type
         $first_run = $this->get_first_run();
+        error_log(var_export($first_run, true), 3, self::$plugin_path . '/data/log.txt');
         $this->post_type = new Post_Type_GF_TenStreet( $first_run );
         
         // Load Assets
@@ -255,7 +250,7 @@ class GF_TenStreet {
      * @return void
      */
     public static function set_first_run() {
-        self::$first_run = true;
+        update_option('gf_tenstreet_first_run', time());
     }
     
     /**
@@ -264,8 +259,8 @@ class GF_TenStreet {
      * @return boolean
      */
     protected function get_first_run() {
-        $first_run = self::$first_run;
-        return $first_run ?  : false;
+        $first_run = get_option('gf_tenstreet_first_run', false);
+        return $first_run ? false : true;
     }
     
 }

@@ -30,7 +30,11 @@ class Post_Type_GF_TenStreet {
         
         if ($flush_rewite) {
 
+            add_action( 'admin_init', array($this, 'add_admin_caps'), 10 );
+            
             flush_rewrite_rules();
+            
+            GF_TenStreet::set_first_run();
             
         }
     }
@@ -41,6 +45,9 @@ class Post_Type_GF_TenStreet {
      * @return void
      */
     protected function register() {
+        
+        global $wp_version;
+        
         $labels = array (
             'name' => _x( 'Lead', 'Post Type General Name', 'gf-tenstreet' ),
             'singular_name' => _x( 'Lead', 'Post Type Singular Name', 'gf-tenstreet' ),
@@ -76,20 +83,51 @@ class Post_Type_GF_TenStreet {
             'show_in_admin_bar' => false,
             'show_in_nav_menus' => false,
             'can_export' => true,
-            'has_archive' => true,
+            'has_archive' => false,
             'exclude_from_search' => true,
-            'publicly_queryable' => true,
-            'capability_type' => 'post',
+            'publicly_queryable' => current_user_can('administrator'),
+            'capability_type' => array('lead', 'leads'),
             'capabilities' => array (
-                'create_posts' => false,
-                'delete_posts' => false
+                'create_posts' => (version_compare( $wp_version, '4.5', '>=') ? 'do_not_allow' : false),
+                'edit_post' => 'edit_lead',
+                'edit_posts' => 'edit_leads',
+                'edit_others_posts' => 'edit_other_leads',
+                'publish_posts' => 'publish_leads',
+                'read_post' => 'read_lead',
+                'read_private_posts' => 'read_private_leads',
+                'delete_post' => 'delete_lead'
             ),
-            'map_meta_cap' => false
+            'map_meta_cap' => true
         ); // Set to false, if users are not allowed to edit/delete existing posts
         
         register_post_type( Post_Type_GF_TenStreet::POST_TYPE, $args );
         
         $this->remove_custom_post_comment();
+        
+    }
+    
+    /**
+     * Configure post type capabilities for admin role
+     * 
+     * @return void
+     * 
+     */
+    function add_admin_caps() {
+        
+        // gets the administrator role
+        $admins = get_role( 'administrator' );
+        
+        $admins->add_cap( 'read' );
+        $admins->add_cap( 'read_lead');
+        $admins->add_cap( 'read_private_leads' );
+        $admins->add_cap( 'edit_lead' );
+        $admins->add_cap( 'edit_leads' );
+        $admins->add_cap( 'edit_others_leads' );
+        $admins->add_cap( 'edit_published_leads' );
+        $admins->add_cap( 'publish_leads' );
+        $admins->add_cap( 'delete_others_leads' );
+        $admins->add_cap( 'delete_private_leads' );
+        $admins->add_cap( 'delete_published_leads' );
     }
     
     /**

@@ -83,7 +83,7 @@ class Post_Type_GF_TenStreet {
             'show_in_admin_bar' => false,
             'show_in_nav_menus' => false,
             'can_export' => true,
-            'has_archive' => false,
+            'has_archive' => true,
             'exclude_from_search' => true,
             'publicly_queryable' => current_user_can('administrator'),
             'capability_type' => array('lead', 'leads'),

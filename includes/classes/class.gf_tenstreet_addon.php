@@ -847,8 +847,13 @@ if (class_exists( "GFForms" ) && class_exists( "GFAddOn") && class_exists( "GFAP
                 return $this->wp_insert_custom_post( $post, $meta, false );
             } else {
                 $gf_tenstreet_admin_notify_error = get_option('gf_tenstreet_admin_notify_error', false);
-                if ($gf_tenstreet_admin_notify_error && is_email($gf_tenstreet_admin_notify_error)) {
-                    $this->send_admin_error_email($gf_tenstreet_admin_notify_error, $entry);
+                if ($gf_tenstreet_admin_notify_error) {
+                    $emails = @array_filter(array_map('trim', explode(',', $gf_tenstreet_admin_notify_error)), function($email){
+                        return is_email($email);
+                    });
+                    if ($emails) {
+                        $this->send_admin_error_email($emails, $entry);
+                    }
                 }
             }
             return false;

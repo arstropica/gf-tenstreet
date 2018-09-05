@@ -160,7 +160,7 @@ class Network_Admin_GF_TenStreet extends Admin_GF_TenStreet {
                 
                 $gf_tenstreet_admin_client_source = isset( $_POST ['gf_tenstreet_admin_client_source'] ) ? $_POST ['gf_tenstreet_admin_client_source'] : null;
                 
-                $gf_tenstreet_admin_notify_error = isset( $_POST ['gf_tenstreet_admin_notify_error'] ) ? sanitize_email($_POST ['gf_tenstreet_admin_notify_error']) : null;
+                $gf_tenstreet_admin_notify_error = isset( $_POST ['gf_tenstreet_admin_notify_error'] ) ? sanitize_text_field($_POST ['gf_tenstreet_admin_notify_error']) : null;
                 
                 $gf_tenstreet_active = isset( $_POST ['gf_tenstreet_active'] ) ? $_POST ['gf_tenstreet_active'] : null;
                 

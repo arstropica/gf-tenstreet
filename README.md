@@ -38,3 +38,7 @@ Yes.
 ### 1.01 ###
 * Fix post type capabilities.
 * Fix post type visibility.
+
+### 1.03 ###
+* Fix post type archives
+* Allow multiple emails in notification field

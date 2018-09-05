@@ -91,7 +91,7 @@ class Admin_GF_TenStreet extends GF_TenStreet {
         
         $gf_tenstreet_admin_client_source = isset( $_POST ['gf_tenstreet_admin_client_source'] ) ? sanitize_text_field( $_POST ['gf_tenstreet_admin_client_source'] ) : false;
         
-        $gf_tenstreet_admin_notify_error = isset( $_POST ['gf_tenstreet_admin_notify_error'] ) ? sanitize_email($_POST ['gf_tenstreet_admin_notify_error']) : null;
+        $gf_tenstreet_admin_notify_error = isset( $_POST ['gf_tenstreet_admin_notify_error'] ) ? sanitize_text_field($_POST ['gf_tenstreet_admin_notify_error']) : null;
         
         if ($gf_tenstreet_admin_client_id && $gf_tenstreet_admin_client_password && $gf_tenstreet_admin_client_source) {
             
@@ -236,7 +236,7 @@ class Admin_GF_TenStreet extends GF_TenStreet {
 			<td><input type="text" name="gf_tenstreet_admin_notify_error"
 				id="gf_tenstreet_admin_notify_error" class="regular-text"
 				value="<?php echo esc_attr($gf_tenstreet_admin_notify_error); ?>" size="33" 
-				placeholder="Please enter an email address." /></td>
+				placeholder="Please enter a single or comma separated list of email address(es)." /></td>
 
 		</tr>
 

@@ -90,6 +90,8 @@ class Admin_GF_TenStreet extends GF_TenStreet {
         $gf_tenstreet_admin_client_password = isset( $_POST ['gf_tenstreet_admin_client_password'] ) ? $_POST ['gf_tenstreet_admin_client_password'] : false;
         
         $gf_tenstreet_admin_client_source = isset( $_POST ['gf_tenstreet_admin_client_source'] ) ? sanitize_text_field( $_POST ['gf_tenstreet_admin_client_source'] ) : false;
+
+        $gf_tenstreet_admin_client_worklist = isset( $_POST ['gf_tenstreet_admin_client_worklist'] ) ? strip_tags( sanitize_textarea_field( $_POST ['gf_tenstreet_admin_client_worklist'] ) ) : false;
         
         $gf_tenstreet_admin_notify_error = isset( $_POST ['gf_tenstreet_admin_notify_error'] ) ? sanitize_text_field($_POST ['gf_tenstreet_admin_notify_error']) : null;
         
@@ -110,6 +112,8 @@ class Admin_GF_TenStreet extends GF_TenStreet {
         update_option( 'gf_tenstreet_admin_client_password', $gf_tenstreet_admin_client_password );
         
         update_option( 'gf_tenstreet_admin_client_source', $gf_tenstreet_admin_client_source );
+
+        update_option( 'gf_tenstreet_admin_client_worklist', empty($gf_tenstreet_admin_client_worklist) ? null : array_filter( explode( "\n", str_replace("\r", "", $gf_tenstreet_admin_client_worklist ) ) ) );
         
         if (isset($gf_tenstreet_admin_notify_error)) {
             
@@ -174,6 +178,8 @@ class Admin_GF_TenStreet extends GF_TenStreet {
             $gf_tenstreet_admin_client_password = get_option( 'gf_tenstreet_admin_client_password', false );
                 
             $gf_tenstreet_admin_client_source = get_option( 'gf_tenstreet_admin_client_source', false );
+
+            $gf_tenstreet_admin_client_worklist = get_option( 'gf_tenstreet_admin_client_worklist', false );
                 
             $gf_tenstreet_admin_notify_error = get_option( 'gf_tenstreet_admin_notify_error', get_bloginfo('admin_email') );
                 
@@ -228,6 +234,18 @@ class Admin_GF_TenStreet extends GF_TenStreet {
 				placeholder="Please enter a Source name." /></td>
 
 		</tr>
+
+        <tr>
+
+            <th scope="row"><?php _e('TenStreet Worklist') ?></th>
+
+            <td><textarea name="gf_tenstreet_admin_client_worklist"
+                id="gf_tenstreet_admin_client_worklist" cols="100"
+                rows="10" class="mceEditor" autocomplete="off"
+                placeholder="<?php esc_attr_e( 'Specify options for Worklist (one account per line)' ); ?>"
+            ><?php echo esc_textarea( implode( "\n", $gf_tenstreet_admin_client_worklist ? : [] ) ); ?></textarea></td>
+
+        </tr>
 
 		<tr>
 

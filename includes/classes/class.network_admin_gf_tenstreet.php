@@ -159,6 +159,8 @@ class Network_Admin_GF_TenStreet extends Admin_GF_TenStreet {
                 $gf_tenstreet_admin_client_password = isset( $_POST ['gf_tenstreet_admin_client_password'] ) ? $_POST ['gf_tenstreet_admin_client_password'] : null;
                 
                 $gf_tenstreet_admin_client_source = isset( $_POST ['gf_tenstreet_admin_client_source'] ) ? $_POST ['gf_tenstreet_admin_client_source'] : null;
+
+                $gf_tenstreet_admin_client_worklist = isset( $_POST ['gf_tenstreet_admin_client_worklist'] ) ? $_POST ['gf_tenstreet_admin_client_worklist'] : null;
                 
                 $gf_tenstreet_admin_notify_error = isset( $_POST ['gf_tenstreet_admin_notify_error'] ) ? sanitize_text_field($_POST ['gf_tenstreet_admin_notify_error']) : null;
                 
@@ -187,7 +189,13 @@ class Network_Admin_GF_TenStreet extends Admin_GF_TenStreet {
                         update_option( 'gf_tenstreet_admin_client_source', $gf_tenstreet_admin_client_source );
 
                     }
-                    
+
+                    if (isset($gf_tenstreet_admin_client_worklist)) {
+
+                        update_option( 'gf_tenstreet_admin_client_worklist', empty($gf_tenstreet_admin_client_worklist) ? null : array_filter( explode( "\n", str_replace("\r", "", $gf_tenstreet_admin_client_worklist ) ) ) );
+
+                    }
+
                     if (isset($gf_tenstreet_admin_notify_error)) {
 
                         update_option( 'gf_tenstreet_admin_notify_error', $gf_tenstreet_admin_notify_error );
@@ -565,6 +573,8 @@ function edit_site_Network_Admin_GF_TenStreet() {
     $gf_tenstreet_admin_client_password = \get_blog_option( $id, 'gf_tenstreet_admin_client_password', false );
     
     $gf_tenstreet_admin_client_source = \get_blog_option( $id, 'gf_tenstreet_admin_client_source', false );
+
+    $gf_tenstreet_admin_client_worklist = \get_blog_option( $id, 'gf_tenstreet_admin_client_worklist', false );
     
     $gf_tenstreet_admin_notify_error = \get_blog_option( $id, 'gf_tenstreet_admin_notify_error', false );
     
@@ -666,6 +676,14 @@ function edit_site_Network_Admin_GF_TenStreet() {
 				<td><input type="text" name="gf_tenstreet_admin_client_source" id="gf_tenstreet_admin_client_source" value="<?php echo $gf_tenstreet_admin_client_source; ?>" /></td>
 
 			</tr>
+
+            <tr class="form-field">
+
+                <th scope="row"><?php _e('TenStreet Worklist') ?></th>
+
+                <td><textarea name="gf_tenstreet_admin_client_worklist" id="gf_tenstreet_admin_client_worklist" cols="80" rows="10" placeholder="Specify options for Worklist (one account per line)" class="all-options"><?php echo esc_textarea( implode( "\n", $gf_tenstreet_admin_client_worklist ? : [] ) ); ?></textarea></td>
+
+            </tr>
 
 			<tr class="form-field">
 

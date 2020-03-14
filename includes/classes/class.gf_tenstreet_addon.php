@@ -16,7 +16,7 @@ if (class_exists( "GFForms" ) && class_exists( "GFAddOn") && class_exists( "GFAP
          *
          * @var String
          */
-        protected $_version = "1.0";
+        protected $_version = "1.01";
         
         /**
          *
@@ -85,6 +85,12 @@ if (class_exists( "GFForms" ) && class_exists( "GFAddOn") && class_exists( "GFAP
         protected $gf_tenstreet;
         
         /**
+         * 
+         * @var GF_TenStreet_Addon
+         */
+        private static $_instance = null;
+        
+        /**
          * Constructor
          */
         public function __construct() {
@@ -95,8 +101,30 @@ if (class_exists( "GFForms" ) && class_exists( "GFAddOn") && class_exists( "GFAP
             
             parent::__construct();
             
-            $this->init();
+            if (! isset( self::$_instance )) {
+
+                self::$_instance = $this;
+
+            }
             
+            $this->init();
+
+        }
+        
+        /**
+         * Get instance
+         * 
+         * @return GF_TenStreet_Addon
+         */
+        public static function get_instance() {
+
+            if ( self::$_instance == null ) {
+
+                self::$_instance = new GF_TenStreet_Addon();
+
+            }
+
+            return self::$_instance;
         }
         
         /**
@@ -133,6 +161,68 @@ if (class_exists( "GFForms" ) && class_exists( "GFAddOn") && class_exists( "GFAP
         }
         
         /**
+         *
+         * {@inheritDoc}
+         * @see GFAddOn::pre_init()
+         */
+        public function pre_init() {
+            parent::pre_init();
+            
+            if ( $this->is_gravityforms_supported() && class_exists( 'GF_Field_Select' ) ) {
+                require_once( $this->plugin_path . 'includes/classes/class.gf_tenstreet_worklist_field.php' );
+            }
+        }
+        
+        /**
+         *
+         * {@inheritDoc}
+         * @see GFAddOn::init_admin()
+         */
+        public function init_admin() {
+            parent::init_admin();
+            
+            add_filter( 'gform_tooltips', array( $this, 'tooltips' ) );
+            add_action( 'gform_field_appearance_settings', array( $this, 'field_appearance_settings' ), 10, 2 );
+        }
+        
+        /**
+         *
+         * @param array $tooltips
+         * @return array
+         */
+        public function tooltips( $tooltips ) {
+            $simple_tooltips = array(
+                'input_class_setting' => sprintf( '<h6>%s</h6>%s', esc_html__( 'Input CSS Classes', 'gf-tenstreet' ), esc_html__( 'The CSS Class names to be added to the field input.', 'gf-tenstreet' ) ),
+            );
+            
+            return array_merge( $tooltips, $simple_tooltips );
+        }
+        
+        /**
+         * 
+         * @param integer $position
+         * @param integer $form_id
+         * 
+         * @return void
+         */
+        public function field_appearance_settings($position, $form_id) {
+            // Add our custom setting just before the 'Custom CSS Class' setting.
+            if ($position == 250) {
+                ?>
+            <li class="input_class_setting field_setting"><label
+            	for="input_class_setting">
+                <?php esc_html_e( 'Input CSS Classes', 'gf-tenstreet' ); ?>
+                <?php gform_tooltip( 'input_class_setting' ) ?>
+				</label> <input id="input_class_setting" type="text"
+            		class="fieldwidth-1"
+            		onkeyup="SetInputClassSetting(jQuery(this).val());"
+            		onchange="SetInputClassSetting(jQuery(this).val());" />
+            </li>
+			<?php
+            }
+        }
+
+        /**
          * Get File Local Path
          *
          * @return string
@@ -149,7 +239,7 @@ if (class_exists( "GFForms" ) && class_exists( "GFAddOn") && class_exists( "GFAP
          */
         public function form_settings_fields($form) {
             $fields = $this->form_mapping_fields( $form );
-            $custom_fields = $this->form_custom_fields($form);
+            $custom_fields = $this->form_custom_fields($form, true);
 
             return array (
                 array (
@@ -209,6 +299,17 @@ if (class_exists( "GFForms" ) && class_exists( "GFAddOn") && class_exists( "GFAP
                     "fields" => $custom_fields
                 )
             );
+        }
+        
+        /**
+         * Returns a custom API field setting
+         *  
+         * @param string $field_name
+         * @return array|null
+         */
+        public function get_custom_field_setting( $field_name ) {
+            $api_fields = $this->get_api_fields(true, true);
+            return isset($api_fields[$field_name]) ? $api_fields[$field_name] : null;
         }
         
         /**
@@ -276,9 +377,10 @@ if (class_exists( "GFForms" ) && class_exists( "GFAddOn") && class_exists( "GFAP
          * Return custom field settings
          * 
          * @param array $form
+         * @param boolean $use_option
          * @return array
          */
-        protected function form_custom_fields($form) {
+        protected function form_custom_fields($form, $use_option = false) {
             
             $settings = array ();
             
@@ -287,12 +389,14 @@ if (class_exists( "GFForms" ) && class_exists( "GFAddOn") && class_exists( "GFAP
             if ($custom_fields && is_array($custom_fields)) {
                 
                 foreach ($custom_fields as $name => $custom_field) {
+
+                    $admin_field_options = $use_option ? get_option( "gf_tenstreet_admin_client_" . preg_replace( "/^gf_tenstreet_/", "", $name ), null ) : null;
                     
                     switch ($custom_field['type']) {
                         
                         case 'select' :
                             
-                            if (isset($custom_field['choices']) && is_array($custom_field['choices'])) {
+                            if (isset( $custom_field['choices'] ) && is_array( $custom_field['choices']) ) {
                                 
                                 $choices = array_merge (
                                     array(
@@ -305,7 +409,7 @@ if (class_exists( "GFForms" ) && class_exists( "GFAddOn") && class_exists( "GFAP
                                             "label" => $choice, 
                                             "value" => $choice
                                             ];
-                                        }, $custom_field['choices'])
+                                        }, ($use_option && $admin_field_options ? $admin_field_options : $custom_field['choices']))
                                 );
                                 
                                 $settings[$name] = array (
@@ -510,6 +614,23 @@ if (class_exists( "GFForms" ) && class_exists( "GFAddOn") && class_exists( "GFAP
         }
         
         /**
+         * Get Entries by Field Type
+         * 
+         * @param array $form
+         * @param array $entry
+         * @param string $type
+         * @return array
+         */
+        protected function get_entry_values_by_type($form, $entry, $type) {
+            
+            $fields = GFAPI::get_fields_by_type($form, $type);
+            
+            return array_map(function($field) use ($entry) {
+                return rgar($entry, $field->id);
+            }, $fields);
+        }
+        
+        /**
          * Remove admin fields from entry array
          *
          * @param array $entry
@@ -699,12 +820,16 @@ if (class_exists( "GFForms" ) && class_exists( "GFAddOn") && class_exists( "GFAP
                 
                 foreach ($custom_fields as $id => $custom_field) {
                     
-                    if (isset($settings[$id]) && $settings[$id] !== "") {
+                    $custom_field_entries = $this->get_entry_values_by_type($form, $entry, $id);
+                    
+                    $custom_answer = empty($custom_field_entries) ? null : reset($custom_field_entries);
+                    
+                    if ($custom_answer || (isset($settings[$id]) && $settings[$id] !== "")) {
                         
                         $customQuestion = [
                             "QuestionId" => $custom_field["question_id"],
                             "Question" => $custom_field["question"],
-                            "Answer" => $settings[$id]
+                            "Answer" => ($custom_answer ? : $settings[$id])
                         ];
                         
                         $customQuestions[] = ["CustomQuestion" => $customQuestion];

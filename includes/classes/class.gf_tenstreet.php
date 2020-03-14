@@ -94,7 +94,7 @@ class GF_TenStreet {
 
         self::$plugin_path = plugin_dir_path( dirname( dirname( __FILE__ ) ) );
         
-        self::$plugin_file = self::$plugin_path . '/gf_tenstreet.php';
+        self::$plugin_file = self::$plugin_path . 'gf_tenstreet.php';
         
         // Hook up to the init action
         add_action( 'init', array (
@@ -250,6 +250,41 @@ class GF_TenStreet {
      */
     public static function set_first_run() {
         update_option('gf_tenstreet_first_run', time());
+    }
+
+    /**
+     * (Re)set an admin client setting field
+     * 
+     * @param string $field Field Name
+     * @param boolean $custom Get custom fields
+     * 
+     * @return boolean
+    */
+    public static function set_default_client_field($field, $custom = false) {
+        $data = file_get_contents( self::$plugin_path . 'data/' . ($custom ? 'custom-' : '') . 'fields.json' );
+        if ($data) {
+            try {
+                $api_fields = json_decode( $data, true );
+                
+                if ($api_fields && isset( $api_fields["fields"] )) {
+                    foreach ($api_fields["fields"] as $api_field) {
+                        if (isset($api_field["name"]) && $field == $api_field["name"]) {
+                            switch ($api_field['type']) {
+                                case 'select' :
+                                    $default = $api_field['choices'];
+                                    if (is_array( $default )) {
+                                        return update_option( "gf_tenstreet_admin_client_" . preg_replace( "/^gf_tenstreet_/", "", $field ), $default );
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                }
+            } catch (\Exception $e) {
+                return false;
+            }
+        }
+        return false;
     }
     
     /**

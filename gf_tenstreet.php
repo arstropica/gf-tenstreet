@@ -4,7 +4,7 @@
  Plugin Name: Gravity Forms TenStreet Addon
  Plugin URI: https://github.com/arstropica/gf-tenstreet.git
  Description: This plugin sends Gravity Forms submissions to the TenStreet API.
- Version: 1.03
+ Version: 1.04
  Author: arstropica
  Author URI: http://arstropica.com
  Author Email: aowilliams@arstropica.com
@@ -39,10 +39,15 @@ function init_gf_tenstreet() {
     
 }
 
+function pre_activation_gf_tenstreet() {
+	GF_TenStreet::set_default_client_field('gf_tenstreet_worklist', true);
+}
+
 function pre_deactivation_gf_tenstreet() {
     flush_rewrite_rules();
     delete_option('gf_tenstreet_first_run');
 }
 
+register_activation_hook( __FILE__ , 'pre_activation_gf_tenstreet' );
 register_deactivation_hook( __FILE__, 'pre_deactivation_gf_tenstreet');
 init_gf_tenstreet();

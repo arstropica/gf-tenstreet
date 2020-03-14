@@ -7,7 +7,7 @@
   
 **Tested up to:** 4.9.8
   
-**Stable tag:** 1.0
+**Stable tag:** 1.04
   
 **License:** GPL 2.0
   
@@ -42,3 +42,7 @@ Yes.
 ### 1.03 ###
 * Fix post type archives
 * Allow multiple emails in notification field
+
+### 1.04 ###
+* Add Plugin Setting for Default Worklist
+* Add Custom Worklist Field Type

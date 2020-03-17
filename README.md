@@ -5,7 +5,7 @@
   
 **Requires at least:** 4.0
   
-**Tested up to:** 4.9.8
+**Tested up to:** 5.3.2
   
 **Stable tag:** 1.04
   

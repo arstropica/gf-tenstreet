@@ -6,7 +6,7 @@
             "question": "set_worklist",
             "label": "Default TenStreet Worklist",
             "type": "select",
-            "choices": ["Bennett Motor","Bennett DriveAway","Ace Doran","BOSS","Agency Roll Up","Bennett Truck Transport","BOSS Roll Up","BOSS Transportation","QC 01","Bennett BHAV","BDS","BME SouthEast Reg","Company/Fleet Drivers"]
+            "choices": []
         }
     ]
 }
